@@ -23,6 +23,7 @@
 - [ ] Перевірити стабільність кількох `heartbeat` cycles і задокументувати ознаки деградації.
 - [ ] Пояснити й задокументувати, чому у dedicated root уже існують два `workspace-gateway-*` та два `mc-gateway-*` агенти.
 - [ ] Підтвердити `board creation` та `board lead flow` end-to-end.
+- [ ] Усунути silent stalls у `board onboarding`, коли gateway agent завершує turn як `NO_REPLY` без наступного onboarding callback.
 - [ ] Після стабілізації звузити policy для `mc-gateway-*` з менш широкими дозволами, ніж поточний `security=full`.
 - [ ] Прийняти окреме рішення щодо того, наскільки глибоко `Mission Control` може керувати `board agents` у цьому `OpenClaw` середовищі.
 
@@ -56,6 +57,7 @@
 | Дати `Mission Control` окремий workspace root | Захищає `main/reminder/harvester` від provisioning side effects | ✓ Good |
 | Для MC-generated templates використовувати `BASE_URL=http://backend:8000` | Зовнішній `Tailscale` backend URL ламав heartbeat/templates | ✓ Good |
 | Вважати Phase 1 незавершеною, доки не пояснено другий `mc-gateway-*` і глобальний `tools.exec` fallback | Verified state уже відрізняється від початкової операційної пам'яті | ✓ Good |
+| Винести onboarding reliability в окрему urgent Phase `03.1` | Board flow показав конкретний product-impacting stall, який не варто змішувати з policy hardening | ✓ Good |
 | Застосувати тимчасовий `exec` виняток лише до dedicated `mc-gateway-*` агента | Початкова мета була такою, але фактичний server state ширший | ⚠️ Revisit |
 | Зберігати операційний контекст у цьому репозиторії перед подальшим hardening | Репозиторій був порожній, а критичні знання існували тільки в діалозі | — Pending |
 

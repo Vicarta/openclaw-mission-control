@@ -11,7 +11,7 @@
 
 **Goal:** Зафіксувати реальний стан інсталяції, інтеграції, ізоляції та тимчасових security exceptions у репозиторії.
 
-**Requirements:**
+**Requirements**:
 - DOC-01
 - DOC-02
 - SAFE-01
@@ -31,7 +31,7 @@
 
 **Goal:** Підтвердити стабільну роботу кількох `heartbeat` cycles і сформувати базову діагностику деградацій.
 
-**Requirements:**
+**Requirements**:
 - MON-01
 - MON-02
 - MON-03
@@ -45,7 +45,7 @@
 
 **Goal:** Перевірити `board creation` і `board lead flow` без побічного впливу на чинне `OpenClaw` середовище.
 
-**Requirements:**
+**Requirements**:
 - FLOW-01
 - FLOW-02
 
@@ -54,11 +54,29 @@
 - Задокументовано очікувану поведінку і known caveats.
 - Не зафіксовано несанкціонованого provisioning за межами dedicated MC workspace root.
 
+### Phase 03.1: Mission Control Onboarding Flow Reliability Hardening (INSERTED)
+
+**Goal:** Усунути silent onboarding stalls у `Mission Control`, щоб board creation flow більше не зависав через `NO_REPLY`, shared heartbeat session або відсутність bounded failure handling.
+**Requirements**: FLOW-03, FLOW-04, FLOW-05
+**Depends on:** Phase 3
+**Plans:** 2 plans
+
+Plans:
+- [x] `03.1-01-PLAN.md` - Isolate onboarding session contract from gateway-main silent control-plane traffic
+- [x] `03.1-02-PLAN.md` - Add bounded failure state, UI recovery path, and regression coverage for onboarding stalls
+
+**Exit Criteria:**
+- `Board onboarding` більше не reuse-ить routine `agent:mc-gateway-...:main` heartbeat semantics без додаткового захисту.
+- Після кожної onboarding answer система або зберігає наступне питання / completion payload, або переходить у явний `stalled/failed` state.
+- UI більше не зависає безкінечно на optimistic тексті `Usually takes a few seconds`.
+- Є regression coverage на кейс, де gateway session завершується `NO_REPLY` без onboarding callback.
+- Є операторський маршрут, де видно причину stall і наступний recovery step.
+
 ## Phase 4: Policy Hardening For mc-gateway
 
 **Goal:** Спробувати звузити `exec` policy для `mc-gateway-*` після того, як стабільність буде підтверджено.
 
-**Requirements:**
+**Requirements**:
 - SECU-01
 - SECU-03
 
@@ -70,7 +88,7 @@
 
 **Goal:** Прийняти архітектурне рішення щодо рівня довіри до `Mission Control` у керуванні `board agents`.
 
-**Requirements:**
+**Requirements**:
 - SECU-02
 
 **Exit Criteria:**
@@ -79,8 +97,8 @@
 
 ## Notes
 
-- Рекомендований наступний крок у GSD-потоці: `$gsd-plan-phase 1`
+- Phase `03.1` виконана `2026-03-25`; наступний крок: live board creation / onboarding smoke test на задеплоєному коді.
 - Якщо спочатку потрібна звірка стану репозиторію та напрямку, використати `$gsd-progress`
 
 ---
-*Last updated: 2026-03-25 after initial roadmap creation*
+*Last updated: 2026-03-25 after executing Phase 03.1 onboarding reliability hardening*

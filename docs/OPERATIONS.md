@@ -83,6 +83,42 @@ grep -n -C 3 'mc-gateway-\|tools.exec\|security\|ask\|host' /opt/openclaw/config
 3. Запустити `board lead flow`.
 4. Перевірити, чи не з'явилися несподівані агенти або зміни у user workspace-ах.
 
+## Onboarding Stall Diagnosis
+
+Ознака проблеми після Phase `03.1`:
+
+- UI більше не має висіти безкінечно на `Usually takes a few seconds`.
+- Якщо gateway не повернув next question або completion payload, onboarding має перейти у `stalled`.
+
+Що перевіряти:
+
+```bash
+docker compose logs --tail=200 backend | grep 'onboarding'
+```
+
+```bash
+docker compose logs --tail=200 webhook-worker
+```
+
+Ознаки confirmed stall:
+
+1. Board створений, але `GET /api/v1/boards/{board_id}/onboarding` лишається без нового assistant payload.
+2. Останнє повідомлення в onboarding transcript має `role=user`.
+3. Від цього `user` message минуло понад 20 секунд.
+4. API/UI повертає `status=stalled` і пропонує `Retry last step`.
+
+Що означає `Retry last step`:
+
+- frontend повторно викликає `POST /api/v1/boards/{board_id}/onboarding/start`;
+- backend редиспачить останню user answer у dedicated onboarding session;
+- це безпечний recovery path для MC-side stalls без ручного редагування БД.
+
+Як відрізнити stall від успішного прогресу:
+
+- Якщо onboarding healthy, після user answer з'являється або нове assistant question payload, або `status=complete`.
+- Якщо board draft уже зібраний, session переходить у `completed`, а не `stalled`.
+- Якщо `status=stalled`, проблема вже не маскується під normal waiting.
+
 ## If Heartbeat Breaks
 
 1. Перевірити `BASE_URL` у `/home/oc/openclaw-mission-control/.env`.
@@ -96,3 +132,4 @@ grep -n -C 3 'mc-gateway-\|tools.exec\|security\|ask\|host' /opt/openclaw/config
 - Не використовувати існуючі user workspace-и для `Mission Control`.
 - Не вважати `tools.exec.ask=off` і `tools.exec.security=full` локальним винятком, доки це не підтверджено в `openclaw.json`.
 - Не міняти внутрішній `BASE_URL` назад на зовнішній `Tailscale` endpoint.
+- Не дебажити stalled onboarding тільки по UI; завжди звіряти backend logs, останній onboarding transcript і факт `status=stalled`.

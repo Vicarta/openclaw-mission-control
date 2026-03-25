@@ -29,6 +29,9 @@
 
 - [ ] **FLOW-01**: `Board creation` проходить end-to-end без пошкодження існуючої інтеграції `OpenClaw`.
 - [ ] **FLOW-02**: `Board lead flow` проходить end-to-end з очікуваною поведінкою control-plane агента.
+- [ ] **FLOW-03**: Interactive `board onboarding` використовує окремий board-scoped session contract або інший механізм, ізольований від routine `gateway-main` heartbeat/control-plane turns.
+- [ ] **FLOW-04**: Після кожного onboarding `start` або `answer` `Mission Control` переходить або до наступного питання, або до `status=complete`, або до явного `stalled/failed` state в межах bounded timeout; infinite loading не допускається.
+- [ ] **FLOW-05**: Silent `NO_REPLY` і missing callback outcomes у `board onboarding` виявляються, логуються і покриті regression tests / operator diagnostics.
 
 ### Security And Governance
 
@@ -69,13 +72,16 @@
 | MON-03 | Phase 2 | Pending |
 | FLOW-01 | Phase 3 | Pending |
 | FLOW-02 | Phase 3 | Pending |
+| FLOW-03 | Phase 03.1 | Pending |
+| FLOW-04 | Phase 03.1 | Pending |
+| FLOW-05 | Phase 03.1 | Pending |
 | SECU-01 | Phase 4 | Pending |
 | SECU-03 | Phase 4 | Pending |
 | SECU-02 | Phase 5 | Pending |
 
 **Coverage:**
-- v1 requirements: 16 total
-- Mapped to phases: 16
+- v1 requirements: 19 total
+- Mapped to phases: 19
 - Unmapped: 0 ✓
 
 ---
