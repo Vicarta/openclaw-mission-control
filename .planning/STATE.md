@@ -13,6 +13,7 @@ See: `.planning/PROJECT.md` (updated 2026-03-25)
 - `2026-03-25` виконано першу фактичну серверну звірку deployment state.
 - Підтверджено `BASE_URL=http://backend:8000`, роботу контейнерів `backend/frontend/webhook-worker/db/redis` і повторювані `POST /api/v1/agent/heartbeat` з `200 OK`.
 - Виявлено дрейф: у dedicated root існують два `workspace-gateway-*`, а в `openclaw.json` присутній глобальний `tools.exec` fallback з `host=gateway`, `security=full`, `ask=off`.
+- Формальна heartbeat-stability перевірка в observation window `2026-03-25 13:31:51 UTC` -> `2026-03-25 13:40:53 UTC` не пройдена: агенти лишалися `online`, але `last_seen_at` не оновлювався і нових `POST /api/v1/agent/heartbeat` у backend logs не з'явилося.
 
 ## Known Facts
 
@@ -33,12 +34,13 @@ See: `.planning/PROJECT.md` (updated 2026-03-25)
 - Надто широкий `exec` policy уже підтверджений глобально в `openclaw.json`, а не лише per-agent.
 - Другий `workspace-gateway-*` може означати легітимний другий gateway або orphaned provisioning state; це треба окремо пояснити.
 - Якщо внутрішній `BASE_URL` дрейфне назад на зовнішній URL, heartbeat/templates можуть знову деградувати.
+- `Mission Control` може показувати gateway agents як `online` навіть тоді, коли heartbeat evidence у його власних БД/logs не оновлюється.
 
 ## Next Actions
 
-1. Пояснити походження другого `mc-gateway-*` / `workspace-gateway-*`.
+1. Пояснити й зафіксувати MC-side критерій, за яким gateway agent лишається `online` без свіжого heartbeat evidence.
 2. Визначити, чи глобальний `tools.exec` fallback потрібен, чи це випадкове розширення policy.
-3. Після цього перейти до формального Phase 2 і зібрати heartbeat observations у вигляді короткого verification note.
+3. Після цього повторити heartbeat verification і лише тоді переходити до board-flow тестів.
 
 ## Recent Decisions
 
