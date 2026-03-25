@@ -19,11 +19,13 @@
 - SAFE-03
 - SAFE-04
 - SAFE-05
+- SAFE-06
 
 **Exit Criteria:**
 - Базова проектна документація існує локально й відображає поточний verified deployment state.
 - Є окремий server context документ з критичними шляхами, URL, ідентифікаторами та technical lessons.
 - Є короткий operations runbook для підключення та первинної перевірки системи.
+- Пояснено різницю між початковою операційною пам'яттю і verified state, якщо на сервері існують додаткові `mc-gateway-*` або ширші policy.
 
 ## Phase 2: Heartbeat Stability Validation
 
@@ -58,6 +60,7 @@
 
 **Requirements:**
 - SECU-01
+- SECU-03
 
 **Exit Criteria:**
 - Є порівняння поточних потреб control-plane агента з мінімально потрібними дозволами.

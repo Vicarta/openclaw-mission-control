@@ -6,7 +6,7 @@
 
 ## Access
 
-- SSH: `ssh -i ~/.ssh/oc_hetzner__oc oc@89.167.61.146`
+- SSH from this workstation: `ssh -i ~/.ssh/oc_hetzner_oc oc@89.167.61.146`
 - UI: `https://ubuntu-oc.tailbd4e1c.ts.net:4444`
 - API: `https://ubuntu-oc.tailbd4e1c.ts.net:4445`
 
@@ -30,25 +30,26 @@
 
 - Dedicated host workspace root: `/opt/openclaw/config/mission-control`
 - Dedicated container workspace root: `/home/node/.openclaw/mission-control`
-- Mission Control agent workspace:
-  `/opt/openclaw/config/mission-control/workspace-gateway-a736f444-d548-448e-9736-11a4516a8735`
+- Verified workspaces on `2026-03-25`:
+  - `/opt/openclaw/config/mission-control/workspace-gateway-a736f444-d548-448e-9736-11a4516a8735`
+  - `/opt/openclaw/config/mission-control/workspace-gateway-b7cc7ef4-c968-4e86-93a2-a63a64335da6`
 
 ## Identifiers
 
-- Gateway id: `a736f444-d548-448e-9736-11a4516a8735`
-- Gateway name: `OpenClaw Sandbox`
-- Mission Control OpenClaw agent id: `mc-gateway-a736f444-d548-448e-9736-11a4516a8735`
+- Verified gateway/agent pairs on `2026-03-25`:
+  - `a736f444-d548-448e-9736-11a4516a8735` / `mc-gateway-a736f444-d548-448e-9736-11a4516a8735` / `OpenClaw Sandbox Gateway Agent`
+  - `b7cc7ef4-c968-4e86-93a2-a63a64335da6` / `mc-gateway-b7cc7ef4-c968-4e86-93a2-a63a64335da6` / `MissionControl01 Gateway Agent`
 
 ## Confirmed Working State
 
 - `Mission Control` встановлений як окремий sidecar.
 - Він уже інтегрований з поточним `OpenClaw gateway`, а не працює окремо.
 - Він використовує той самий `OpenClaw runtime` і той самий стек підключених провайдерів/моделей.
-- Provisioning не чіпає існуючі user workspace-и.
-- `Mission Control` створює тільки свого `mc-gateway-*` агента.
-- Heartbeat цього агента вже успішно дійшов.
-- Backend `Mission Control` прийняв `POST /api/v1/agent/heartbeat`.
-- Агент у `Mission Control` перейшов у `online`.
+- `backend` і `webhook-worker` запущені та підключені і до `openclaw-mission-control_default`, і до `app_default`.
+- `BASE_URL` у `.env` дорівнює `http://backend:8000`.
+- Provisioning не вийшов за межі dedicated root `/opt/openclaw/config/mission-control`.
+- Backend `Mission Control` приймає повторювані `POST /api/v1/agent/heartbeat` з `200 OK`.
+- У worker logs є принаймні один `status=online` для lifecycle reconcile.
 
 ## Important Technical Lessons
 
@@ -60,17 +61,23 @@
 
 ## Current Practical Fix
 
-Локальний виняток зроблено лише для:
+У файлі `/opt/openclaw/config/openclaw.json` підтверджено per-agent override для:
 
 - `mc-gateway-a736f444-d548-448e-9736-11a4516a8735`
 
-У файлі `/opt/openclaw/config/openclaw.json` для нього задано:
+Для нього задано:
 
 - `tools.exec.host = gateway`
 - `tools.exec.ask = off`
 - `tools.exec.security = full`
 
-Це не глобальна policy і має бути предметом окремого hardening після стабілізації.
+Однак це не повна картина: у тому ж файлі також присутній глобальний fallback:
+
+- `tools.exec.host = gateway`
+- `tools.exec.ask = off`
+- `tools.exec.security = full`
+
+Отже, поточний server state ширший за початкову гіпотезу про суто локальний виняток і має бути предметом окремого hardening.
 
 ## Additional Completed Work
 
@@ -92,8 +99,9 @@
 
 1. Перевірити стабільність кількох `heartbeat` cycles.
 2. Протестувати `board creation` і `board lead flow`.
-3. Спробувати звузити policy для `mc-gateway-*` після стабілізації.
-4. Оцінити, чи варто дозволяти `Mission Control` глибше керувати `board agents`.
+3. Пояснити походження другого `workspace-gateway-*` / `mc-gateway-*`.
+4. Звузити policy для `mc-gateway-*` і перевірити, чи глобальний `tools.exec` взагалі потрібен.
+5. Оцінити, чи варто дозволяти `Mission Control` глибше керувати `board agents`.
 
 ---
-*Captured on 2026-03-25 from current operator context*
+*Updated on 2026-03-25 after SSH verification against live server state*

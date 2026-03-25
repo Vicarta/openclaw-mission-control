@@ -17,6 +17,7 @@
 - [ ] **SAFE-03**: `Mission Control` створює лише свого dedicated `mc-gateway-*` control-plane агента, а не побічні user agents.
 - [ ] **SAFE-04**: Для MC-generated templates і heartbeat внутрішній backend URL лишається `http://backend:8000`, а не зовнішній `Tailscale` backend endpoint.
 - [ ] **SAFE-05**: Поточний виняток `tools.exec` задокументований як локальний і застосовується лише до `mc-gateway-a736f444-d548-448e-9736-11a4516a8735`.
+- [ ] **SAFE-06**: Кожен додатковий `mc-gateway-*` агент або `workspace-gateway-*` каталог пояснений і визнаний очікуваним, або ж видалений як orphan/stale state.
 
 ### Stability And Monitoring
 
@@ -32,6 +33,7 @@
 ### Security And Governance
 
 - [ ] **SECU-01**: Після стабілізації оцінено більш вузьку policy-модель для `mc-gateway-*`, ніж `tools.exec.security=full`.
+- [ ] **SECU-03**: Підтверджено, чи глобальний `tools.exec` у `/opt/openclaw/config/openclaw.json` має існувати взагалі для цього середовища.
 - [ ] **SECU-02**: Задокументовано рішення, чи має `Mission Control` право глибше керувати `board agents` у цьому середовищі.
 
 ## v2 Requirements
@@ -61,17 +63,19 @@
 | SAFE-03 | Phase 1 | Pending |
 | SAFE-04 | Phase 1 | Pending |
 | SAFE-05 | Phase 1 | Pending |
+| SAFE-06 | Phase 1 | Pending |
 | MON-01 | Phase 2 | Pending |
 | MON-02 | Phase 2 | Pending |
 | MON-03 | Phase 2 | Pending |
 | FLOW-01 | Phase 3 | Pending |
 | FLOW-02 | Phase 3 | Pending |
 | SECU-01 | Phase 4 | Pending |
+| SECU-03 | Phase 4 | Pending |
 | SECU-02 | Phase 5 | Pending |
 
 **Coverage:**
-- v1 requirements: 14 total
-- Mapped to phases: 14
+- v1 requirements: 16 total
+- Mapped to phases: 16
 - Unmapped: 0 ✓
 
 ---

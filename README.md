@@ -20,15 +20,17 @@
 - API: `https://ubuntu-oc.tailbd4e1c.ts.net:4445`
 - Mission Control install root: `/home/oc/openclaw-mission-control`
 - Dedicated workspace root: `/opt/openclaw/config/mission-control`
-- Mission Control gateway id: `a736f444-d548-448e-9736-11a4516a8735`
-- Mission Control agent id: `mc-gateway-a736f444-d548-448e-9736-11a4516a8735`
+- Verified on `2026-03-25`: two `mc-gateway-*` workspaces/agents currently exist under the dedicated workspace root
+- Known gateway/agent:
+  - `a736f444-d548-448e-9736-11a4516a8735` / `mc-gateway-a736f444-d548-448e-9736-11a4516a8735`
+  - `b7cc7ef4-c968-4e86-93a2-a63a64335da6` / `mc-gateway-b7cc7ef4-c968-4e86-93a2-a63a64335da6`
 
 ## Operating Principles
 
 - `Mission Control` не read-only: він реально provision-ить агентів у `OpenClaw`.
 - Для `Mission Control` дозволений тільки окремий workspace root, без доступу до існуючих `main/reminder/harvester`.
 - Внутрішній `BASE_URL` для MC-generated templates має лишатися `http://backend:8000`.
-- Тимчасове розширення `exec` policy дозволене лише для dedicated `mc-gateway-*` control-plane агента.
+- Потрібно вважати `tools.exec` policy недовіреною зоною до окремої перевірки: на сервері підтверджено не лише per-agent override, а й глобальний `tools.exec` fallback з `host=gateway`, `security=full`, `ask=off`.
 
 ## Immediate Priorities
 

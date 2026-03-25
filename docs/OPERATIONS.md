@@ -7,7 +7,7 @@
 ## Connect
 
 ```bash
-ssh -i ~/.ssh/oc_hetzner__oc oc@89.167.61.146
+ssh -i ~/.ssh/oc_hetzner_oc oc@89.167.61.146
 ```
 
 ## Navigate
@@ -62,10 +62,10 @@ BASE_URL=http://backend:8000
 ls -la /opt/openclaw/config/mission-control
 ```
 
-Перевірити локальний виняток `mc-gateway-*` в `openclaw.json`:
+Перевірити `mc-gateway-*` і `tools.exec` в `openclaw.json`:
 
 ```bash
-rg -n "mc-gateway|tools\\.exec|security|ask|host" /opt/openclaw/config/openclaw.json
+grep -n -C 3 'mc-gateway-\|tools.exec\|security\|ask\|host' /opt/openclaw/config/openclaw.json
 ```
 
 ## Heartbeat Validation Checklist
@@ -74,6 +74,7 @@ rg -n "mc-gateway|tools\\.exec|security|ask|host" /opt/openclaw/config/openclaw.
 2. Переглянути логи backend на наявність `POST /api/v1/agent/heartbeat`.
 3. Переконатися, що агент `mc-gateway-a736f444-d548-448e-9736-11a4516a8735` лишається `online` у UI/API.
 4. Повторити перевірку через кілька циклів, а не лише один раз.
+5. Звірити, чи не з'явилися нові `workspace-gateway-*` у `/opt/openclaw/config/mission-control`.
 
 ## Board Flow Validation Checklist
 
@@ -87,11 +88,11 @@ rg -n "mc-gateway|tools\\.exec|security|ask|host" /opt/openclaw/config/openclaw.
 1. Перевірити `BASE_URL` у `/home/oc/openclaw-mission-control/.env`.
 2. Перевірити доступність `ws://openclaw-gateway:18789` з контейнерного оточення `Mission Control`.
 3. Переглянути `AGENTS.md`, `TOOLS.md`, `HEARTBEAT.md` у dedicated workspace агента.
-4. Перевірити, чи не було змінено локальний `tools.exec` виняток в `/opt/openclaw/config/openclaw.json`.
+4. Перевірити, чи не було змінено per-agent або глобальний `tools.exec` в `/opt/openclaw/config/openclaw.json`.
 5. Звірити, чи не зламалися pairing, token rotation або template sync.
 
 ## Guardrails
 
 - Не використовувати існуючі user workspace-и для `Mission Control`.
-- Не поширювати `tools.exec.ask=off` і `tools.exec.security=full` на інших агентів без окремого рішення.
+- Не вважати `tools.exec.ask=off` і `tools.exec.security=full` локальним винятком, доки це не підтверджено в `openclaw.json`.
 - Не міняти внутрішній `BASE_URL` назад на зовнішній `Tailscale` endpoint.
